@@ -115,13 +115,7 @@ Then they will render below:
 
 #### adaLN-Zero
 
-![adaLN-Zero Results](results/adaln_zero.png)
-
-#### Training Loss
-
-![Loss Curve](results/loss.png)
-
----
+## ![adaLN-Zero Results](results/adaln_zero.png)
 
 ## Inference Optimization (DDIM)
 
