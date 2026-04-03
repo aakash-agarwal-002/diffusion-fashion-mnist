@@ -1,4 +1,4 @@
-# DiT_FashionMnist
+# Diffusion Transformer (DiT) on FASHION-MNIST
 
 This repository provides experiments and reference code for training Diffusion Transformer (DiT) models on the FashionMNIST dataset. It contains multiple model variants, training and inference scripts, checkpoints, and utilities for reproducing results and generating sample outputs.
 
@@ -33,21 +33,24 @@ Every variant directory contains its own `dit.py`, `vit_model.py`, checkpoints, 
 ## Key Implementation Details
 
 ### Direct Patch-Based Diffusion
+
 - No VAE is used; model operates directly in pixel space
 - Images (28 x 28) are split into 7 x 7 patches
 - Total tokens: 16
 - Embedding dimension: 256
 
 ### Diffusion Process
+
 - DDPM framework with linear beta schedule
 - Timesteps: 1000
-- Model predicts noise \(\epsilon_\theta(x_t, t, y)\)
+- Model predicts noise \(\epsilon\_\theta(x_t, t, y)\)
 
 ### Training Objective
+
 - Mean Squared Error:
 
   \[
-  L = ||\epsilon - \epsilon_\theta(x_t, t, y)||^2
+  L = ||\epsilon - \epsilon\_\theta(x_t, t, y)||^2
   \]
 
 ---
@@ -55,15 +58,17 @@ Every variant directory contains its own `dit.py`, `vit_model.py`, checkpoints, 
 ## Model Variants
 
 ### In-Context Conditioning
+
 - Conditioning token:
 
   \[
-  c_{token} = TimeEmb(t) + ClassEmb(y)
+  c\_{token} = TimeEmb(t) + ClassEmb(y)
   \]
 
 - Prepended to transformer sequence
 
 ### adaLN-Zero
+
 - Conditioning injected via adaptive layer normalization
 - Includes learned scale, shift, and gating
 - Improves stability and convergence
@@ -72,17 +77,17 @@ Every variant directory contains its own `dit.py`, `vit_model.py`, checkpoints, 
 
 ## Training Configuration
 
-| Parameter | Value |
-|----------|------|
-| timesteps | 1000 |
-| emb_dim | 256 |
-| num_block | 6 |
-| heads | 8 |
-| ff_dim | 4 |
-| epochs | 25 |
-| patch_size | 7 |
-| lr | 1e-3 |
-| batch_size | 128 |
+| Parameter  | Value |
+| ---------- | ----- |
+| timesteps  | 1000  |
+| emb_dim    | 256   |
+| num_block  | 6     |
+| heads      | 8     |
+| ff_dim     | 4     |
+| epochs     | 25    |
+| patch_size | 7     |
+| lr         | 1e-3  |
+| batch_size | 128   |
 
 ---
 
@@ -90,25 +95,30 @@ Every variant directory contains its own `dit.py`, `vit_model.py`, checkpoints, 
 
 ### Quantitative Results (FID)
 
-| Model Variant | T=100 | T=500 | T=1000 |
-|--------------|------|------|--------|
-| In-Context Conditioning | 3.362 | 1.156 | 0.065 |
-| adaLN-Zero | 2.587 | 1.029 | 0.054 |
+| Model Variant           | T=100 | T=500 | T=1000 |
+| ----------------------- | ----- | ----- | ------ |
+| In-Context Conditioning | 3.362 | 1.156 | 0.065  |
+| adaLN-Zero              | 2.587 | 1.029 | 0.054  |
 
 Observations:
+
 - Increasing inference steps improves generation quality
 - adaLN-Zero consistently outperforms In-Context conditioning
 
 ### Qualitative Results
+
 Then they will render below:
 
 #### In-Context Conditioning
+
 ![In-Context Results](results/in_context.png)
 
 #### adaLN-Zero
+
 ![adaLN-Zero Results](results/adaln_zero.png)
 
 #### Training Loss
+
 ![Loss Curve](results/loss.png)
 
 ---
@@ -120,10 +130,10 @@ Then they will render below:
 
 Example trade-off:
 
-| Method | Steps | Time (s) | FID |
-|--------|------|---------|-----|
-| DDPM | 1000 | 216 | 0.054 |
-| DDIM | 100 | 0.398 | 0.164 |
+| Method | Steps | Time (s) | FID   |
+| ------ | ----- | -------- | ----- |
+| DDPM   | 1000  | 216      | 0.054 |
+| DDIM   | 100   | 0.398    | 0.164 |
 
 - Achieves ~500x speedup with minimal quality degradation
 
@@ -131,9 +141,9 @@ Example trade-off:
 
 ## Ablation Study
 
-| Model | Modification | Effect |
-|------|-------------|--------|
-| adaLN-Zero | Remove gating (alpha) | Reduced stability, worse FID |
+| Model      | Modification              | Effect                                         |
+| ---------- | ------------------------- | ---------------------------------------------- |
+| adaLN-Zero | Remove gating (alpha)     | Reduced stability, worse FID                   |
 | In-Context | Remove class conditioning | Generates valid images but loses label control |
 
 ---
@@ -189,10 +199,10 @@ PY
 
 Each experimental variant folder contains:
 
-- `dit.py`  
-- `vit_model.py`  
-- `checkpoints/`  
-- `results/`  
+- `dit.py`
+- `vit_model.py`
+- `checkpoints/`
+- `results/`
 
 ---
 
@@ -225,18 +235,18 @@ python dit.py
 
 ## Reproducing Results
 
-1. Install dependencies  
-2. Prepare dataset  
-3. Run training  
-4. Monitor results  
-5. Evaluate checkpoints  
+1. Install dependencies
+2. Prepare dataset
+3. Run training
+4. Monitor results
+5. Evaluate checkpoints
 
 ---
 
 ## Troubleshooting
 
-- Reduce batch size if GPU memory is insufficient  
-- Reinstall dependencies if needed  
-- Modify hyperparameters directly in `dit.py`  
+- Reduce batch size if GPU memory is insufficient
+- Reinstall dependencies if needed
+- Modify hyperparameters directly in `dit.py`
 
 ---
